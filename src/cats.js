@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 axios.defaults.headers.common['x-api-key'] =
   'live_g4A1AJGaGoYFMLLUN2PYsPff0HoXJKyPTH1oGlbdU6YKI607oX0G37ILq3QxjXFq';
 
