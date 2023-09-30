@@ -1,33 +1,28 @@
-p,
-h1,
-span {
-    margin: 0;
+.breed-select {
+    width: 200px;
+    height: 25px;
 }
 
-.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    display: none;
+.error {
+    color: red;
 }
 
-.ss-main.breed-select {
-    width: 250px;
-    margin-bottom: 20px;
+.loader {
+    font-weight: 600;
 }
 
 .cat-info {
     display: flex;
-    gap: 16px;
+    gap: 30px;
+    margin-top: 20px;
 }
 
-.cat-wrapper {
-    width: 480px;
+.textInfo {
+    margin: 30px;
+    font-size: large;
+    max-width: 700px;
 }
 
-.cat-header {
-    margin-bottom: 10px;
-}
-
-.cat-desc {
-    margin-bottom: 10px;
+.is-hidden {
+    display: none;
 }

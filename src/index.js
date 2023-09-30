@@ -1,54 +1,65 @@
-import Notiflix from 'notiflix';
 import { fetchBreeds, fetchCatByBreed } from './cats';
 
-const select = document.querySelector('.breed-select');
-const wrapper = document.querySelector('.cat-info');
-const loader = document.querySelector('.loader');
+const breedSelect = document.querySelector('.breed-select');
 
-fetchBreeds()
-  .then(select.isVisibilyte)
-  .then(breeds => renderBreeds(breeds))
-  .catch(error =>
-    Notiflix.Notify.failure(
-      'Oops! Something went wrong! Try reloading the page!'
-    )
-  )
-  .finally(() => {
-    select.classList.remove('is-hidden');
-    loader.classList.add('is-hidden');
-  });
+const infoLoader = document.querySelector('.loader');
+const selectError = document.querySelector('.error');
+const catInfo = document.querySelector('.cat-info');
 
-function selectBreed(values) {
-  fetchCatByBreed(values)
-    .then((wrapper.innerHTML = ''))
-    .then(wrapper.classList.add('is-hidden'))
-    .then(loader.classList.remove('is-hidden'))
-    .then(cat => renderCat(cat))
-    .catch(error =>
-      Notiflix.Notify.failure(
-        'Oops! Something went wrong! Try reloading the page!'
-      )
-    )
-    .finally(() => {
-      wrapper.classList.remove('is-hidden');
-      loader.classList.add('is-hidden');
+window.addEventListener('load', init);
+
+function init() {
+  let breedsData;
+  fetchBreeds()
+    .then(data => {
+      breedsData = data;
+      data.forEach(breed => {
+        const option = document.createElement('option');
+        option.value = breed.id;
+        option.textContent = breed.name;
+        breedSelect.appendChild(option);
+
+        breedSelect.classList.remove('is-hidden');
+        infoLoader.classList.add('is-hidden');
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      selectError.classList.remove('is-hidden');
+      breedSelect.classList.add('is-hidden');
+      infoLoader.classList.add('is-hidden');
     });
-}
 
-function renderBreeds(breeds) {
-  let markup = [];
-  breeds.map(breed => {
-    markup.push({ text: breed.name, value: breed.id });
+  breedSelect.addEventListener('change', () => {
+    const selectBreedId = breedSelect.value;
+    infoLoader.classList.remove('is-hidden');
+    catInfo.classList.add('is-hidden');
+    selectError.classList.add('is-hidden');
+
+    fetchCatByBreed(selectBreedId)
+      .then(result => {
+        const catData = result[0];
+        const breedData = breedsData.find(
+          breed => breed.id === catData.breeds[0].id
+        );
+
+        const markup = createMarkup(catData, breedData);
+        catInfo.innerHTML = markup;
+
+        infoLoader.classList.add('is-hidden');
+        catInfo.classList.remove('is-hidden');
+      })
+      .catch(error => {
+        console.log(error);
+        selectError.classList.remove('is-hidden');
+        infoLoader.classList.add('is-hidden');
+      });
   });
-  slim.setData(markup);
 }
 
-function renderCat(cat) {
-  const markup = `<img class='cat-img' src='${cat.url}' width='460px'>
-  <div class='cat-wrapper'>
-    <h1 class='cat-header'>${cat.breeds[0].name}</h1>
-    <p class='cat-desc'>${cat.breeds[0].description}</p>
-    <p class='cat-temp'><b>Temperament: </b>${cat.breeds[0].temperament}</p>
-  </div>`;
-  wrapper.innerHTML = markup;
+function createMarkup(catData, breedData) {
+  return `<img src='${catData.url}' width='300' alt='${breedData.name}'/>
+        <div class='textInfo'><h1>${breedData.name}</h1>
+        <p>${breedData.description}</p>
+        <p><b>Temperament:</b> ${breedData.temperament}</p></div>`;
 }
